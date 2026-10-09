@@ -1,26 +1,192 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Only a light theme exists (DESIGN-it-2023.md › Known gaps). dark: stays bound
+   to a class so the OS setting can't tint fields grey. */
+@custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hover is for mice: taps on phones must not leave hover stuck on. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-serif: var(--font-lora), Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* shadcn semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* IT-2023 tokens */
+  --color-primary-hover: #222d57;
+  --color-primary-active: #0e1530;
+  --color-primary-soft: #e9ecf5;
+  --color-secondary-hover: #22502a;
+  --color-secondary-soft: #eaf3eb;
+  --color-heading: #172146;
+  --color-body: var(--body);
+  --color-disabled: #9a9fb0;
+  --color-canvas: #f6f7f9;
+  --color-surface-strong: #eef0f4;
+  --color-hairline: var(--hairline);
+
+  --color-status-info: #5aaea8;
+  --color-status-info-fill: #e2f1f0;
+  --color-status-info-text: #24625e;
+  --color-status-warning: #c99d3f;
+  --color-status-warning-fill: #f6ecd8;
+  --color-status-warning-text: #6e4f15;
+  --color-status-success-fill: #eaf3eb;
+  --color-status-success-text: #2b6032;
+  --color-status-error: #c13515;
+  --color-status-error-fill: #fdecea;
+  --color-status-error-text: #c13515;
+
+  /* Radius: px on purpose, radii don't scale with text */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-4xl: 9999px;
+
+  --shadow-float: 0 0 0 1px rgb(0 0 0 / 0.02), 0 2px 6px rgb(0 0 0 / 0.04), 0 4px 8px rgb(0 0 0 / 0.1);
+
+  /* Type, all rem so the reader's text-size setting scales the UI */
+  --text-xs: 0.875rem; /* hint, the minimum */
+  --text-xs--line-height: 1.5;
+  --text-xs--letter-spacing: 0.005em;
+  --text-sm: 1rem; /* small, staff tables */
+  --text-sm--line-height: 1.5;
+  --text-base: 1.125rem; /* body */
+  --text-base--line-height: 1.6;
+  --text-lg: 1.125rem; /* item title */
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.5;
+  --text-2xl: 1.5rem; /* section title */
+  --text-2xl--line-height: 1.3;
+  --text-2xl--letter-spacing: -0.01em;
+  --text-3xl: 2rem; /* page title */
+  --text-3xl--line-height: 1.2;
+  --text-3xl--letter-spacing: -0.015em;
+  --text-4xl: 2.5rem; /* number, dashboard counters only */
+  --text-4xl--line-height: 1.1;
+  --text-4xl--letter-spacing: -0.02em;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #3b4054;
+  --body: #3b4054;
+  --card: #ffffff;
+  --card-foreground: #3b4054;
+  --popover: #ffffff;
+  --popover-foreground: #3b4054;
+  --primary: #172146;
+  --primary-foreground: #ffffff;
+  --secondary: #2b6032;
+  --secondary-foreground: #ffffff;
+  --muted: #eef0f4;
+  --muted-foreground: #5f6578;
+  --accent: #e9ecf5;
+  --accent-foreground: #172146;
+  --destructive: #c13515;
+  --hairline: #dfe1e8;
+  --border: var(--hairline);
+  --input: #80869a;
+  --ring: #172146;
+  --radius: 8px;
+}
+
+/* More contrast: hairlines become control borders, muted text becomes body. */
+@media (prefers-contrast: more) {
+  :root {
+    --hairline: #80869a;
+    --muted-foreground: #3b4054;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-base text-body antialiased;
+  }
+  h1, h2, h3 {
+    @apply text-heading;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  /* The one material: sticky bars only. */
+  .material-bar {
+    background: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-color: var(--hairline);
+  }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .material-bar {
+      background: #fff;
+      backdrop-filter: none;
+    }
+  }
+}
+
+/* Reduced motion means gentler, not none: movement becomes a short fade. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    --tw-enter-scale: 1 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+  }
+  [data-slot="button"]:active {
+    scale: 1 !important;
+  }
 }

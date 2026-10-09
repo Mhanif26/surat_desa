@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tooling
+.playwright-mcp/
+
+# local poll votes (production votes live in Vercel Blob)
+/data/polls.json*
