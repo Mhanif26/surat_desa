@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Masuk ke portal staf SuratDesa untuk mengelola layanan administrasi desa.">
+  <title>Masuk Staf Desa — SuratDesa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #172146;
+      --navy-hover: #222d57;
+      --navy-soft: #e9ecf5;
+      --green: #2b6032;
+      --green-hover: #22502a;
+      --green-soft: #eaf3eb;
+      --body: #3b4054;
+      --muted: #5f6578;
+      --canvas: #f6f7f9;
+      --border: #dfe1e8;
+      --control-border: #80869a;
+      --error: #c13515;
+      --error-soft: #fdecea;
+      --shadow: 0 0 0 1px rgb(0 0 0 / 2%), 0 2px 6px rgb(0 0 0 / 4%), 0 4px 8px rgb(0 0 0 / 10%);
+      --ease: cubic-bezier(.23, 1, .32, 1);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--body);
+      background:
+        radial-gradient(circle at 10% 8%, rgb(233 236 245 / 82%) 0, transparent 28rem),
+        linear-gradient(135deg, #fff 0%, var(--canvas) 100%);
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      font-size: 1.125rem;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    button, input { font: inherit; }
+    :focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+    .page-shell { width: min(1200px, calc(100% - 48px)); min-height: 100vh; margin: 0 auto; }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      padding: 12px 0;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--navy); font-size: 1.25rem; font-weight: 700; letter-spacing: -.04em; text-decoration: none; }
+    .brand-mark { display: grid; place-items: center; width: 30px; height: 30px; color: var(--green); background: var(--green-soft); border-radius: 50%; }
+    .brand-mark svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .back-link { color: var(--navy); font-size: .875rem; font-weight: 600; text-underline-offset: 4px; }
+    .login-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 480px); align-items: center; gap: 96px; min-height: calc(100vh - 88px); padding: 48px 0 72px; }
+    .intro { max-width: 500px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; color: var(--navy); background: var(--navy-soft); border-radius: 9999px; font-size: .875rem; font-weight: 600; }
+    .eyebrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    h1 { margin: 20px 0 16px; color: var(--navy); font-size: clamp(2rem, 4vw, 2.5rem); line-height: 1.2; letter-spacing: -.025em; }
+    .intro p { margin: 0; color: var(--body); }
+    .trust-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 28px; color: var(--muted); font-size: .875rem; }
+    .trust-note svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--green); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .login-card { padding: 32px; background: #fff; border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+    .login-card h2 { margin: 0 0 6px; color: var(--navy); font-size: 1.5rem; line-height: 1.3; }
+    .login-card > p { margin: 0 0 24px; color: var(--muted); font-size: .875rem; }
+    .field { margin-top: 18px; }
+    label { display: block; margin-bottom: 6px; color: var(--navy); font-size: .875rem; font-weight: 600; }
+    .input-wrap { position: relative; }
+    input[type="text"], input[type="password"] { width: 100%; min-height: 48px; padding: 10px 14px; color: var(--body); background: #fff; border: 1px solid var(--control-border); border-radius: 8px; }
+    input::placeholder { color: var(--muted); }
+    input[aria-invalid="true"] { border-color: var(--error); }
+    .password-input { padding-right: 76px !important; }
+    .toggle-password { position: absolute; top: 50%; right: 8px; min-height: 36px; padding: 0 8px; color: var(--navy); background: transparent; border: 0; border-radius: 6px; cursor: pointer; font-size: .75rem; font-weight: 600; transform: translateY(-50%); }
+    .toggle-password:hover { background: var(--navy-soft); }
+    .field-error { min-height: 22px; margin: 4px 0 0; color: var(--error); font-size: .75rem; }
+    .form-options { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 24px; }
+    .remember { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .8125rem; }
+    .remember input { width: 16px; height: 16px; accent-color: var(--green); }
+    .forgot-link { color: var(--navy); font-size: .8125rem; font-weight: 600; text-underline-offset: 3px; }
+    .submit-button { width: 100%; min-height: 48px; color: #fff; background: var(--green); border: 1px solid var(--green); border-radius: 8px; cursor: pointer; font-size: .875rem; font-weight: 600; transition: background 150ms var(--ease), transform 100ms var(--ease); }
+    .submit-button:hover { background: var(--green-hover); }
+    .submit-button:active { transform: scale(.97); }
+    .form-status { margin: 16px 0 0; padding: 10px 12px; color: #24625e; background: var(--green-soft); border-radius: 8px; font-size: .8125rem; }
+    .form-status[hidden] { display: none; }
+    .help { margin: 24px 0 0; padding-top: 20px; color: var(--muted); border-top: 1px solid var(--border); font-size: .8125rem; text-align: center; }
+    .help a { color: var(--navy); font-weight: 600; text-underline-offset: 3px; }
+    @media (max-width: 799px) {
+      body { font-size: 1rem; }
+      .page-shell { width: min(100% - 32px, 560px); }
+      .login-layout { display: block; min-height: auto; padding: 48px 0 64px; }
+      .intro { margin-bottom: 32px; }
+      .intro h1 { font-size: 2rem; }
+      .login-card { padding: 24px 20px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="SuratDesa, kembali ke beranda">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15c4.5.5 8-2.2 10-7 2.7 5.7-.5 10-5 10-2 0-3.7-1-5-3Z"/></svg></span>
+        suratdesa
+      </a>
+      <a class="back-link" href="index.html">Kembali ke beranda</a>
+    </header>
+    <main class="login-layout">
+      <section class="intro" aria-labelledby="page-title">
+        <span class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2L12 3Z"/></svg>Portal Staf Desa</span>
+        <h1 id="page-title">Kelola layanan warga dengan lebih mudah.</h1>
+        <p>Masuk ke ruang kerja staf untuk memeriksa pengajuan, memverifikasi berkas, dan menerbitkan surat administrasi desa.</p>
+        <p class="trust-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="9"/></svg>Akses ini khusus untuk petugas yang telah terdaftar pada sistem desa.</p>
+      </section>
+      <section class="login-card" aria-labelledby="login-title">
+        <h2 id="login-title">Masuk ke portal staf</h2>
+        <p>Gunakan akun resmi yang diberikan administrator desa.</p>
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="email">Email atau ID staf</label>
+            <input id="email" name="email" type="text" autocomplete="username" placeholder="contoh: staf@desa.id" required>
+            <p class="field-error" id="email-error" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="password">Kata sandi</label>
+            <div class="input-wrap">
+              <input class="password-input" id="password" name="password" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi" required>
+              <button class="toggle-password" type="button" aria-controls="password" aria-label="Tampilkan kata sandi">Lihat</button>
+            </div>
+            <p class="field-error" id="password-error" aria-live="polite"></p>
+          </div>
+          <div class="form-options">
+            <label class="remember"><input type="checkbox" name="remember"> Ingat saya</label>
+            <a class="forgot-link" href="mailto:admin@desa.id?subject=Reset%20kata%20sandi">Lupa kata sandi?</a>
+          </div>
+          <button class="submit-button" type="submit">Masuk ke Portal</button>
+          <p class="form-status" id="form-status" role="status" hidden></p>
+        </form>
+        <p class="help">Belum memiliki akses? Hubungi <a href="mailto:admin@desa.id">administrator desa</a>.</p>
+      </section>
+    </main>
+  </div>
+  <script>
+    const form = document.querySelector("#login-form");
+    const email = document.querySelector("#email");
+    const password = document.querySelector("#password");
+    const status = document.querySelector("#form-status");
+    const errors = {
+      email: document.querySelector("#email-error"),
+      password: document.querySelector("#password-error")
+    };
+
+    document.querySelector(".toggle-password").addEventListener("click", (event) => {
+      const button = event.currentTarget;
+      const visible = password.type === "text";
+      password.type = visible ? "password" : "text";
+      button.textContent = visible ? "Lihat" : "Sembunyikan";
+      button.setAttribute("aria-label", visible ? "Tampilkan kata sandi" : "Sembunyikan kata sandi");
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      errors.email.textContent = "";
+      errors.password.textContent = "";
+      status.hidden = true;
+      email.removeAttribute("aria-invalid");
+      password.removeAttribute("aria-invalid");
+
+      let valid = true;
+      if (!email.value.trim()) {
+        errors.email.textContent = "Masukkan email atau ID staf.";
+        email.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+      if (!password.value) {
+        errors.password.textContent = "Masukkan kata sandi.";
+        password.setAttribute("aria-invalid", "true");
+        valid = false;
+      }
+      if (!valid) {
+        (email.value.trim() ? password : email).focus();
+        return;
+      }
+
+      status.textContent = "Formulir siap dikirim. Hubungkan form ini ke layanan autentikasi desa untuk melanjutkan.";
+      status.hidden = false;
+    });
+  </script>
+</body>
+</html>
