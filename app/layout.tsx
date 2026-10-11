@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Lora, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,13 +19,13 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: { default: "IT-2023 Design System", template: "%s · IT-2023" },
-  description: "A calm, friendly design language and Next.js starter built on shadcn/ui.",
+  title: { default: "SuratDesa — Layanan Administrasi Desa Digital", template: "%s · SuratDesa" },
+  description: "Ajukan surat administrasi desa secara mandiri, transparan, dan gratis.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${lora.variable}`}>
+    <html lang="id" className={`${jakarta.variable} ${lora.variable}`}>
       <body className="min-h-dvh">
         <TooltipProvider delayDuration={300} skipDelayDuration={150}>
           {children}
