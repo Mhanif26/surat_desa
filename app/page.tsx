@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { ArrowRight, Check, CircleHelp, Menu, Play, Search, ShieldCheck, X } from "lucide-react"
+import Image from "next/image"
+import { useEffect, useState } from "react"
+import { ArrowRight, Check, Menu, Play, Search, ShieldCheck, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { StatusTag } from "@/components/status"
@@ -28,6 +29,39 @@ export default function Home() {
   const [statusMessage, setStatusMessage] = useState("Pengajuan terakhir diperbarui hari ini")
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
 
+  useEffect(() => {
+    const header = document.querySelector("header")
+    const trackedSections = navItems
+      .map(([, id]) => document.getElementById(id))
+      .filter((section): section is HTMLElement => section !== null)
+
+    let frame: number | undefined
+    const updateActiveSection = () => {
+      const marker = window.scrollY + (header?.offsetHeight ?? 64) + 100
+      let current = trackedSections[0]?.id ?? "beranda"
+      trackedSections.forEach((section) => {
+        if (section.offsetTop <= marker) current = section.id
+      })
+      setActive(current)
+    }
+    const onScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        updateActiveSection()
+        frame = undefined
+      })
+    }
+
+    updateActiveSection()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", updateActiveSection)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", updateActiveSection)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
+
   const goTo = (id: string) => {
     setActive(id)
     setMenuOpen(false)
@@ -45,8 +79,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-background text-body">
-      <header className="material-bar sticky top-3 z-20 mx-auto w-[calc(100%-2rem)] max-w-[1200px] rounded-2xl border shadow-sm">
-        <nav className="mx-auto flex min-h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6" aria-label="Navigasi utama">
+      <header className="material-bar sticky top-3 z-20 mx-auto -mb-[76px] h-16 w-[calc(100%-2rem)] max-w-[1200px] rounded-2xl border shadow-sm">
+        <nav className="mx-auto flex h-full max-w-[1200px] items-center justify-between gap-6 px-4 sm:px-6" aria-label="Navigasi utama">
           <Link href="#beranda" className="flex items-center gap-2 font-bold tracking-tight text-heading" onClick={() => goTo("beranda")}>
             <span className="grid size-8 place-items-center rounded-full bg-secondary-soft text-secondary" aria-hidden="true">
               <span className="text-lg">⌁</span>
@@ -63,7 +97,7 @@ export default function Home() {
           >
             {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
-          <div id="primary-navigation" className={`${menuOpen ? "flex" : "hidden"} absolute inset-x-2 top-[4.5rem] flex-col gap-1 rounded-xl border bg-white p-2 shadow-float md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0 md:shadow-none`}>
+          <div id="primary-navigation" className={`${menuOpen ? "flex" : "hidden"} absolute inset-x-2 top-[4.5rem] flex-col gap-1 rounded-xl border bg-white p-2 shadow-float md:static md:flex md:flex-row md:items-center md:gap-2 md:border-0 md:bg-transparent md:p-0 md:shadow-none`}>
             {navItems.map(([label, id]) => (
               <button
                 key={id}
@@ -83,6 +117,18 @@ export default function Home() {
       </header>
 
       <section id="beranda" className="relative overflow-hidden bg-[radial-gradient(circle_at_50%_18%,#e9ecf5_0,transparent_35rem)] px-6 pb-16 pt-32 text-center md:pb-24 md:pt-40">
+        <div
+          className="pointer-events-none absolute -left-12 top-[250px] z-0 h-[310px] w-[230px] rotate-[-18deg] rounded-[14px] border border-primary/10 bg-[linear-gradient(180deg,rgb(23_33_70_/_12%)_0_18px,transparent_18px),linear-gradient(90deg,transparent_0_28px,rgb(23_33_70_/_7%)_28px_30px,transparent_30px_100%),repeating-linear-gradient(180deg,transparent_0_28px,rgb(23_33_70_/_7%)_28px_30px,transparent_30px_58px),#fff] opacity-100 shadow-[0_14px_30px_rgb(23_33_70_/_7%)]"
+          aria-hidden="true"
+        />
+        <Image
+          src="/images/hero-art.png"
+          alt=""
+          aria-hidden="true"
+          width={3180}
+          height={2832}
+          className="pointer-events-none absolute -right-[270px] top-[28px] z-0 hidden w-[min(520px,44vw)] max-w-none rotate-[-15deg] opacity-75 drop-shadow-[0_18px_18px_rgb(23_33_70_/_14%)] lg:block"
+        />
         <div className="relative z-10 mx-auto max-w-[1200px]">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-4 py-1.5 text-sm font-semibold text-heading">
             <ShieldCheck className="size-4" aria-hidden="true" /> Layanan mandiri resmi warga desa
@@ -174,30 +220,56 @@ export default function Home() {
       <section id="faq" className="px-6 py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
           <SectionHeading title="Pertanyaan yang sering diajukan" description="Temukan jawaban atas pertanyaan umum seputar pengajuan surat." />
-          <div className="divide-y divide-hairline border-y border-hairline">
+          <div className="mx-auto max-w-3xl border-t border-hairline">
             {[
               ["Berapa lama proses pengajuan surat?", "Pengajuan biasanya selesai dalam 1 hari kerja setelah berkas dinyatakan lengkap oleh petugas desa."],
               ["Apakah saya harus datang ke balai desa?", "Tidak selalu. Anda dapat mengisi formulir, mengunggah berkas, dan mengunduh surat dari HP."],
+              ["Apa yang terjadi jika pengajuan saya ditolak?", "Anda akan menerima keterangan dari petugas mengenai berkas yang perlu diperbaiki sebelum mengajukan kembali."],
               ["Apakah ada biaya untuk layanan ini?", "Layanan pengajuan surat melalui SuratDesa tidak dipungut biaya."],
             ].map(([question, answer], index) => (
-              <div key={question}>
-                <button type="button" className="flex min-h-16 w-full items-center justify-between gap-4 py-4 text-left font-semibold text-heading" aria-expanded={faqOpen === index} onClick={() => setFaqOpen(faqOpen === index ? null : index)}>
-                  {question}<CircleHelp className="size-5 shrink-0" aria-hidden="true" />
-                </button>
-                {faqOpen === index && <p className="pb-5 pr-8 text-base text-muted-foreground">{answer}</p>}
-              </div>
+              <details key={question} className="border-b border-hairline" open={faqOpen === index}>
+                <summary
+                  className="flex min-h-[68px] cursor-pointer list-none items-center justify-between gap-5 py-4 text-left text-base font-semibold text-heading marker:hidden [&::-webkit-details-marker]:hidden"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    setFaqOpen(faqOpen === index ? null : index)
+                  }}
+                >
+                  {question}
+                  <span className="shrink-0 text-2xl font-normal leading-none" aria-hidden="true">{faqOpen === index ? "−" : "+"}</span>
+                </summary>
+                {faqOpen === index && <div className="max-w-3xl pb-5 pr-8 text-base text-muted-foreground"><p>{answer}</p></div>}
+              </details>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto w-[calc(100%-3rem)] max-w-[1200px] rounded-2xl border border-hairline bg-white px-6 py-12 text-center md:py-16">
-        <h2 className="mx-auto max-w-2xl text-2xl font-semibold text-heading">Butuh surat administrasi hari ini? Ajukan sekarang</h2>
-        <p className="mt-2 text-base text-muted-foreground">Proses cepat, transparan, dan tidak dipungut biaya sepeser pun.</p>
-        <Button asChild variant="secondary" className="mt-6"><Link href="#status">Ajukan surat mandiri</Link></Button>
-      </section>
+      <div className="relative min-h-[370px] overflow-hidden bg-[radial-gradient(circle_at_12%_50%,rgb(233_236_245_/_72%)_0,transparent_16rem),radial-gradient(circle_at_88%_45%,rgb(234_243_235_/_82%)_0,transparent_18rem)] px-6 py-0">
+        <Image
+          src="/images/cta-paper.png"
+          alt=""
+          aria-hidden="true"
+          width={1611}
+          height={968}
+          className="pointer-events-none absolute -bottom-32 -left-[90px] z-0 w-[500px] max-w-none rotate-[-4deg] drop-shadow-[0_12px_16px_rgb(23_33_70_/_18%)]"
+        />
+        <Image
+          src="/images/cta-pen.png"
+          alt=""
+          aria-hidden="true"
+          width={532}
+          height={607}
+          className="pointer-events-none absolute -bottom-14 -right-8 z-0 w-[180px] max-w-none rotate-[8deg] drop-shadow-[0_12px_16px_rgb(23_33_70_/_18%)]"
+        />
+        <section className="relative z-10 mx-auto mt-0 max-w-[1200px] rounded-[14px] border border-hairline bg-white px-6 py-12 text-center shadow-none md:py-16">
+          <h2 className="mx-auto max-w-2xl text-2xl font-semibold text-heading">Butuh surat administrasi hari ini? Ajukan sekarang</h2>
+          <p className="mt-2 text-base text-muted-foreground">Proses cepat, transparan, dan tidak dipungut biaya sepeser pun.</p>
+          <Button asChild variant="secondary" className="mt-6"><Link href="#status">Ajukan surat mandiri</Link></Button>
+        </section>
+      </div>
 
-      <footer className="mt-16 bg-secondary px-6 py-12 text-white">
+      <footer className="bg-secondary px-6 py-12 text-white">
         <div className="mx-auto grid max-w-[1200px] gap-8 md:grid-cols-3">
           <div><h2 className="font-semibold">suratdesa</h2><p className="mt-3 max-w-xs text-lg font-semibold leading-snug">Layanan administrasi desa yang lebih mudah untuk semua warga.</p><Link className="mt-5 inline-block text-sm underline underline-offset-4" href="/login">Akses staf desa</Link></div>
           <FooterColumn title="Layanan" links={[["Alur layanan", "#alur"], ["Panduan video", "#panduan"], ["Cek status pengajuan", "#status"], ["Pertanyaan umum", "#faq"]]} />
